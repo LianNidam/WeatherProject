@@ -1,10 +1,38 @@
+const express = require("express");
+const https = require("https");
+
+const app = express();
+
+
+app.get("/", function(req, res) {
+
+  const query= "Paris";
+  const appIdKey= "f2895ea75bdf6aa1506595f37f88814f";
+  const unit= "metric";
+  const url = "https://api.openweathermap.org/data/2.5/weather?q=" +query+ "&appid=" +appIdKey+ " &units=" +unit;
+  https.get(url, function(response) {
+    console.log(response.statusCode);
+
+    response.on("data", function(data) {
+      const weatherData = JSON.parse(data);
+      const temp = weatherData.main.temp
+      const weatherDescription = weatherData.weather[0].description
+      const icon = weatherData.weather[0].icon
+      const imageURL= "http://openweathermap.org/img/wn/"+ icon +"@2x.png";
+
+      res.write("<p>The weather is currenly "+ weatherDescription+ "</p>");
+      res.write("<h1>The temperature in Tel Aviv is " + temp + " degrees Celcius.</h1>");
+      res.write("<img src=" + imageURL + ">");
+      res.send();
+    });
+  });
+
+});
 
 
 
-const express= require("express");
-const app= express();
 
 
-app.listen(3000, function(){
-  console.log("server running on port 3000...")
+app.listen(3000, function() {
+  console.log("server running on port 3000.");
 });
